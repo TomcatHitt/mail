@@ -5,8 +5,9 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
   document.querySelector('#compose').addEventListener('click', compose_email);
-  document.querySelector('compose-form').addEventListener('submit', send_email);
-  // By default, load the inbox
+  
+  document.querySelector('#compose-form').addEventListener('submit', send_email);
+  // By default, load the inbox#
   load_mailbox('inbox');
 });
 
@@ -21,6 +22,9 @@ function compose_email() {
   document.querySelector('#compose-recipients').value = '';
   document.querySelector('#compose-subject').value = '';
   document.querySelector('#compose-body').value = '';
+}
+function view_email(id){
+  console.log(id)
 }
 
 function load_mailbox(mailbox) {
@@ -45,9 +49,10 @@ function load_mailbox(mailbox) {
           <p>${singleEmail.timestamp}</p>
         `;
         newEmail.className = singleEmail.read ? 'read': 'unread';
+
         newEmail.addEventListener('click', function() {
-          console.log('This element has been clicked!')
-        });
+          view_email(singleEmail.id)
+        }); 
         document.querySelector('#emails-view').append(newEmail);
       })
   });
@@ -74,8 +79,7 @@ function send_email(event){
       load_mailbox('sent');
   });
 }
-
-function view_email(){
+function view_email(id){
   fetch(`/emails/${id}`)
   .then(response => response.json())
   .then(email => {
@@ -127,7 +131,7 @@ function view_email(){
 
         document.querySelector('#compose-recipients').value = email.sender;
         let subject = email.subject;
-        if(subject.split[' ',1][0] != "Re:"){
+        if(subject.split(' ',1)[0] != "Re:"){
           subject = "Re: " + email.subject;
         }
         document.querySelector('#compose-subject').value = subject;
